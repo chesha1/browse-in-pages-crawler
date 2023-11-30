@@ -161,5 +161,5 @@ headers = {
 if __name__ == '__main__':
     uid = '401315430'
     dynamic_id = '866472758206267397'
-    info_list = get_dynamic_info_entrance(uid,dynamic_id,True)
+    info_list = get_dynamic_info_entrance(uid, dynamic_id, True)
     print(info_list)

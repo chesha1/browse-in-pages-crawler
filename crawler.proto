@@ -3,16 +3,16 @@ syntax = "proto3";
 package Crawler;
 
 service Crawler {
-  rpc GetDynamicInfo (JsonRequest) returns (JsonResponse);
+  rpc GetDynamicInfo (DynamicRequest) returns (DynamicResponse);
 }
 
-message JsonRequest {
+message DynamicRequest {
   string uid = 1;
   string dynamic_id = 2;
   bool interruptible = 3;
 }
 
-message JsonResponse {
+message DynamicResponse {
   string code = 1;
   string message = 2;
   string data = 3;

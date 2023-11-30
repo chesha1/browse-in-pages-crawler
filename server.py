@@ -10,12 +10,11 @@ class CrawlerService(crawler_pb2_grpc.CrawlerServicer):
 
     # 实现.proto文件中定义的RPC方法
     def GetDynamicInfo(self, request, context):
-        a,b,c = request.uid,request.dynamic_id,request.interruptible
         code, message, data = local_crawler.get_dynamic_info_entrance(request.uid, request.dynamic_id,
                                                                       request.interruptible)
 
         # 构建响应消息
-        return crawler_pb2.JsonResponse(
+        return crawler_pb2.DynamicResponse(
             code=code,
             message=message,
             data=data
@@ -30,8 +29,17 @@ def serve():
     # 将定义的服务类添加到 gRPC 服务器
     crawler_pb2_grpc.add_CrawlerServicer_to_server(CrawlerService(), server)
 
+    # 读取证书和密钥
+    with open('server.crt', 'rb') as f:
+        certificate_chain = f.read()
+    with open('server.key', 'rb') as f:
+        private_key = f.read()
+
+    # 创建SSL凭证
+    server_credentials = grpc.ssl_server_credentials([(private_key, certificate_chain)])
+
     # 指定服务器监听的端口
-    server.add_insecure_port('[::]:60000')
+    server.add_secure_port('localhost:60000', server_credentials)
 
     # 启动服务器
     server.start()

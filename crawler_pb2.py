@@ -13,17 +13,17 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rcrawler.proto\x12\x07\x43rawler\"E\n\x0bJsonRequest\x12\x0b\n\x03uid\x18\x01 \x01(\t\x12\x12\n\ndynamic_id\x18\x02 \x01(\t\x12\x15\n\rinterruptible\x18\x03 \x01(\x08\";\n\x0cJsonResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\t2H\n\x07\x43rawler\x12=\n\x0eGetDynamicInfo\x12\x14.Crawler.JsonRequest\x1a\x15.Crawler.JsonResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rcrawler.proto\x12\x07\x43rawler\"H\n\x0e\x44ynamicRequest\x12\x0b\n\x03uid\x18\x01 \x01(\t\x12\x12\n\ndynamic_id\x18\x02 \x01(\t\x12\x15\n\rinterruptible\x18\x03 \x01(\x08\">\n\x0f\x44ynamicResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\t2N\n\x07\x43rawler\x12\x43\n\x0eGetDynamicInfo\x12\x17.Crawler.DynamicRequest\x1a\x18.Crawler.DynamicResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'crawler_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
-  _globals['_JSONREQUEST']._serialized_start=26
-  _globals['_JSONREQUEST']._serialized_end=95
-  _globals['_JSONRESPONSE']._serialized_start=97
-  _globals['_JSONRESPONSE']._serialized_end=156
-  _globals['_CRAWLER']._serialized_start=158
-  _globals['_CRAWLER']._serialized_end=230
+  _globals['_DYNAMICREQUEST']._serialized_start=26
+  _globals['_DYNAMICREQUEST']._serialized_end=98
+  _globals['_DYNAMICRESPONSE']._serialized_start=100
+  _globals['_DYNAMICRESPONSE']._serialized_end=162
+  _globals['_CRAWLER']._serialized_start=164
+  _globals['_CRAWLER']._serialized_end=242
 # @@protoc_insertion_point(module_scope)

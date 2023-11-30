@@ -16,8 +16,8 @@ class CrawlerStub(object):
         """
         self.GetDynamicInfo = channel.unary_unary(
                 '/Crawler.Crawler/GetDynamicInfo',
-                request_serializer=crawler__pb2.JsonRequest.SerializeToString,
-                response_deserializer=crawler__pb2.JsonResponse.FromString,
+                request_serializer=crawler__pb2.DynamicRequest.SerializeToString,
+                response_deserializer=crawler__pb2.DynamicResponse.FromString,
                 )
 
 
@@ -35,8 +35,8 @@ def add_CrawlerServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetDynamicInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDynamicInfo,
-                    request_deserializer=crawler__pb2.JsonRequest.FromString,
-                    response_serializer=crawler__pb2.JsonResponse.SerializeToString,
+                    request_deserializer=crawler__pb2.DynamicRequest.FromString,
+                    response_serializer=crawler__pb2.DynamicResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -60,7 +60,7 @@ class Crawler(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Crawler.Crawler/GetDynamicInfo',
-            crawler__pb2.JsonRequest.SerializeToString,
-            crawler__pb2.JsonResponse.FromString,
+            crawler__pb2.DynamicRequest.SerializeToString,
+            crawler__pb2.DynamicResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

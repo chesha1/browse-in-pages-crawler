@@ -13,6 +13,8 @@ python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. crawler.prot
 - [x] 爬虫到指定位置停止
 - [ ] 爬取评论区
 - [x] 触发反爬的异常处理
+- [x] localhost的安全链接
+- [ ] 远程安全链接
 
 ## 性能
 为了躲过 B 站的反爬手段，每次 GET 之间有 1.5 秒的间隔，在这种情况下，`get_dynamic_info_list_with_interrupt` 和 `get_dynamic_info_list` 几乎没有性能区别
