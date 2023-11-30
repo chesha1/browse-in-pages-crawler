@@ -56,7 +56,7 @@ def get_dynamic_info_list(uid, headers, cookies):
         result = result + list_item
         url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
             offset, uid)
-        time.sleep(1.5)
+        time.sleep(2)
     return result
 
 
@@ -88,7 +88,7 @@ def get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id):
         result = result + list_item
         url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
             offset, uid)
-        time.sleep(1.5)
+        time.sleep(2)
     return result
 
 
@@ -135,7 +135,7 @@ headers = {
     # 'TE': 'trailers',
 }
 
-uid = '401315430'
+uid = '38809570'
 dynamic_id = '856460592460857412'
 info_list = get_dynamic_info_list(uid, headers, cookies)
-print("aaa")
+print(info_list)
