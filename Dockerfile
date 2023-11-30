@@ -1,5 +1,5 @@
 # 使用 Python 的官方基础镜像
-FROM python:3.
+FROM python:latest
 
 # 设置工作目录
 WORKDIR /usr/src/app
@@ -11,7 +11,7 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 应用运行在哪个端口
-EXPOSE 5000
+EXPOSE 60000
 
 # 运行应用
-CMD ["python", "./app.py"]
+CMD ["python3", "./local_crawler.py"]

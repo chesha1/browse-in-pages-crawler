@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import hello_pb2 as hello__pb2
+import crawler_pb2 as crawler__pb2
 
 
-class GreeterStub(object):
+class CrawlerStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -14,42 +14,42 @@ class GreeterStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.SayHello = channel.unary_unary(
-                '/hello.Greeter/SayHello',
-                request_serializer=hello__pb2.HelloRequest.SerializeToString,
-                response_deserializer=hello__pb2.HelloReply.FromString,
+        self.GetDynamicInfo = channel.unary_unary(
+                '/Crawler.Crawler/GetDynamicInfo',
+                request_serializer=crawler__pb2.JsonRequest.SerializeToString,
+                response_deserializer=crawler__pb2.JsonResponse.FromString,
                 )
 
 
-class GreeterServicer(object):
+class CrawlerServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def SayHello(self, request, context):
+    def GetDynamicInfo(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_GreeterServicer_to_server(servicer, server):
+def add_CrawlerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SayHello': grpc.unary_unary_rpc_method_handler(
-                    servicer.SayHello,
-                    request_deserializer=hello__pb2.HelloRequest.FromString,
-                    response_serializer=hello__pb2.HelloReply.SerializeToString,
+            'GetDynamicInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetDynamicInfo,
+                    request_deserializer=crawler__pb2.JsonRequest.FromString,
+                    response_serializer=crawler__pb2.JsonResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'hello.Greeter', rpc_method_handlers)
+            'Crawler.Crawler', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class Greeter(object):
+class Crawler(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def SayHello(request,
+    def GetDynamicInfo(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,8 +59,8 @@ class Greeter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/hello.Greeter/SayHello',
-            hello__pb2.HelloRequest.SerializeToString,
-            hello__pb2.HelloReply.FromString,
+        return grpc.experimental.unary_unary(request, target, '/Crawler.Crawler/GetDynamicInfo',
+            crawler__pb2.JsonRequest.SerializeToString,
+            crawler__pb2.JsonResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

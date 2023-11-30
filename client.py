@@ -1,21 +1,26 @@
-# 导入相关模块
 import grpc
-import hello_pb2
-import hello_pb2_grpc
+import crawler_pb2
+import crawler_pb2_grpc
 
-# 客户端运行函数
+# 定义连接 gRPC 服务器的函数
 def run():
-    # 创建到服务器的连接
-    with grpc.insecure_channel('localhost:50051') as channel:
-        # 创建一个stub（客户端对象），用于调用服务端方法
-        stub = hello_pb2_grpc.GreeterStub(channel)
+    # 连接服务器，此处地址为本地主机的 50051 端口
+    # 在实际应用中，应替换为服务器的实际地址和端口
+    with grpc.insecure_channel('localhost:60000') as channel:
+        # 创建一个客户端对象
+        stub = crawler_pb2_grpc.CrawlerStub(channel)
 
-        # 调用SayHello方法，并传递HelloRequest消息
-        response = stub.SayHello(hello_pb2.HelloRequest(name='world'))
+        # 创建一个 JsonRequest 请求对象
+        request = crawler_pb2.JsonRequest(uid="329660103", dynamic_id="test", interruptible=False)
 
-        # 打印从服务端收到的消息
-        print("Greeter client received: " + response.message)
+        # 调用服务端的 GetDynamicInfo 方法，并传入请求
+        response = stub.GetDynamicInfo(request)
 
-# Python程序的入口点
+        # 打印响应内容
+        print("客户端收到响应: ")
+        print("code:", response.code)
+        print("message:", response.message)
+        print("data:", response.data)
+
 if __name__ == '__main__':
     run()

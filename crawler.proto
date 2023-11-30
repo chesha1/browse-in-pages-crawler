@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package Crawler;
+
+service Crawler {
+  rpc GetDynamicInfo (JsonRequest) returns (JsonResponse);
+}
+
+message JsonRequest {
+  string uid = 1;
+  string dynamic_id = 2;
+  bool interruptible = 3;
+}
+
+message JsonResponse {
+  string code = 1;
+  string message = 2;
+  string data = 3;
+}

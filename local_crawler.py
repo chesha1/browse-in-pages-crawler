@@ -14,7 +14,10 @@ def get_single_dynamic_info_list(url, headers, cookies):
     result = []
     response = requests.get(url, cookies=cookies, headers=headers)
     content = response.text
-    data = json.loads(content)['data']['items']
+    json_obj = json.loads(content)
+    if json_obj['code'] == -352:
+        return [-352]
+    data = json_obj['data']['items']
 
     for i in data:
         result_item = dict()
@@ -24,6 +27,9 @@ def get_single_dynamic_info_list(url, headers, cookies):
         result_item['forward'] = i['modules']['module_stat']['forward']['count']
         result_item['comment'] = i['modules']['module_stat']['comment']['count']
         result_item['like'] = i['modules']['module_stat']['like']['count']
+        result_item['top'] = False
+        if 'module_tag' in i['modules']:
+            result_item['top'] = True
         result.append(result_item)
 
     return result
@@ -34,8 +40,9 @@ def get_dynamic_info_list(uid, headers, cookies):
     :param uid: 用户的 B 站 uid
     :param headers:
     :param cookies:
-    :return: 所有的动态信息组成的列表
-    信息包括：
+    :return: 状态码，状态信息，动态列表
+    这三个都是字符串，动态列表是 list 用 json.dumps 转化成的字符串
+    动态列表中的每一条包括：
     1. 动态 id
     2. 动态类型 见 https://socialsisteryi.github.io/bilibili-API-collect/docs/dynamic/dynamic_enum.html
                和 https://socialsisteryi.github.io/bilibili-API-collect/docs/dynamic/all.html#data%E5%AF%B9%E8%B1%A1-items%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1-basic%E5%AF%B9%E8%B1%A1
@@ -43,6 +50,7 @@ def get_dynamic_info_list(uid, headers, cookies):
     4. 评论数
     5. 点赞数
     6. 发布时间（Unix 时间戳）
+    7. 是否为置顶动态
     '''
     offset = ''
     url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
@@ -50,6 +58,10 @@ def get_dynamic_info_list(uid, headers, cookies):
     result = []
     while True:
         list_item = get_single_dynamic_info_list(url, headers, cookies)
+        if list_item == [-352]:
+            status_code = "-1"
+            status_message = "terminated by bilibili system"
+            return status_code, status_message, result
         if not list_item:
             break
         offset = list_item[-1]['id_str']
@@ -57,7 +69,9 @@ def get_dynamic_info_list(uid, headers, cookies):
         url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
             offset, uid)
         time.sleep(2)
-    return result
+    status_code = "0"
+    status_message = "Success"
+    return status_code, status_message, json.dumps(result)
 
 
 def get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id):
@@ -89,7 +103,16 @@ def get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id):
         url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
             offset, uid)
         time.sleep(2)
-    return result
+    status_code = "0"
+    status_message = "Success"
+    return status_code, status_message, json.dumps(result)
+
+
+def get_dynamic_info_entrance(uid, dynamic_id, interruptible):
+    if interruptible:
+        return get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id)
+    else:
+        return get_dynamic_info_list(uid, headers, cookies)
 
 
 cookies = {
@@ -135,7 +158,8 @@ headers = {
     # 'TE': 'trailers',
 }
 
-uid = '38809570'
-dynamic_id = '856460592460857412'
-info_list = get_dynamic_info_list(uid, headers, cookies)
-print(info_list)
+if __name__ == '__main__':
+    uid = '401315430'
+    dynamic_id = '866472758206267397'
+    info_list = get_dynamic_info_entrance(uid,dynamic_id,True)
+    print(info_list)
