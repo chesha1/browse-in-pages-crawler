@@ -13,17 +13,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rcrawler.proto\x12\x07\x43rawler\"H\n\x0e\x44ynamicRequest\x12\x0b\n\x03uid\x18\x01 \x01(\t\x12\x12\n\ndynamic_id\x18\x02 \x01(\t\x12\x15\n\rinterruptible\x18\x03 \x01(\x08\">\n\x0f\x44ynamicResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\t2N\n\x07\x43rawler\x12\x43\n\x0eGetDynamicInfo\x12\x17.Crawler.DynamicRequest\x1a\x18.Crawler.DynamicResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rcrawler.proto\x12\x07\x43rawler\"L\n\x12\x42iliDynamicRequest\x12\x0b\n\x03uid\x18\x01 \x01(\t\x12\x12\n\ndynamic_id\x18\x02 \x01(\t\x12\x15\n\rinterruptible\x18\x03 \x01(\x08\"B\n\x13\x42iliDynamicResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\t\"?\n\x12\x42iliCommentRequest\x12\x12\n\ndynamic_id\x18\x01 \x01(\t\x12\x15\n\rinterruptible\x18\x02 \x01(\x08\"B\n\x13\x42iliCommentResponse\x12\x0c\n\x04\x63ode\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\t2\xa7\x01\n\x0b\x42iliCrawler\x12K\n\x0eGetDynamicInfo\x12\x1b.Crawler.BiliDynamicRequest\x1a\x1c.Crawler.BiliDynamicResponse\x12K\n\x0eGetCommentInfo\x12\x1b.Crawler.BiliCommentRequest\x1a\x1c.Crawler.BiliCommentResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'crawler_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
-  _globals['_DYNAMICREQUEST']._serialized_start=26
-  _globals['_DYNAMICREQUEST']._serialized_end=98
-  _globals['_DYNAMICRESPONSE']._serialized_start=100
-  _globals['_DYNAMICRESPONSE']._serialized_end=162
-  _globals['_CRAWLER']._serialized_start=164
-  _globals['_CRAWLER']._serialized_end=242
+  _globals['_BILIDYNAMICREQUEST']._serialized_start=26
+  _globals['_BILIDYNAMICREQUEST']._serialized_end=102
+  _globals['_BILIDYNAMICRESPONSE']._serialized_start=104
+  _globals['_BILIDYNAMICRESPONSE']._serialized_end=170
+  _globals['_BILICOMMENTREQUEST']._serialized_start=172
+  _globals['_BILICOMMENTREQUEST']._serialized_end=235
+  _globals['_BILICOMMENTRESPONSE']._serialized_start=237
+  _globals['_BILICOMMENTRESPONSE']._serialized_end=303
+  _globals['_BILICRAWLER']._serialized_start=306
+  _globals['_BILICRAWLER']._serialized_end=473
 # @@protoc_insertion_point(module_scope)

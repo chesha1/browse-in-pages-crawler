@@ -1,3 +1,5 @@
+import json
+
 import grpc
 import crawler_pb2
 import crawler_pb2_grpc
@@ -15,19 +17,20 @@ def run():
     # 在实际应用中，应替换为服务器的实际地址和端口
     with grpc.secure_channel('localhost:60000', credentials) as channel:
         # 创建一个客户端对象
-        stub = crawler_pb2_grpc.CrawlerStub(channel)
+        stub = crawler_pb2_grpc.BiliCrawlerStub(channel)
 
         # 创建一个 Request 请求对象
-        request = crawler_pb2.DynamicRequest(uid="329660103", dynamic_id="test", interruptible=False)
+        request = crawler_pb2.BiliDynamicRequest(uid="329660103", dynamic_id="test", interruptible=False)
 
         # 调用服务端的 GetDynamicInfo 方法，并传入请求
         response = stub.GetDynamicInfo(request)
-
+        data = response.data
+        data_obj = json.loads(data)
         # 打印响应内容
         print("客户端收到响应: ")
         print("code:", response.code)
         print("message:", response.message)
-        print("data:", response.data)
+        print("data:", data)
 
 
 if __name__ == '__main__':

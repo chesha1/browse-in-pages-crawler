@@ -6,19 +6,22 @@ import local_crawler
 
 
 # 定义服务类，继承自生成的基类
-class CrawlerService(crawler_pb2_grpc.CrawlerServicer):
+class BiliCrawlerService(crawler_pb2_grpc.BiliCrawlerServicer):
 
     # 实现.proto文件中定义的RPC方法
     def GetDynamicInfo(self, request, context):
-        code, message, data = local_crawler.get_dynamic_info_entrance(request.uid, request.dynamic_id,
-                                                                      request.interruptible)
+        code, message, data = local_crawler.bili_get_dynamic_info_entrance(request.uid, request.dynamic_id,
+                                                                           request.interruptible)
 
         # 构建响应消息
-        return crawler_pb2.DynamicResponse(
+        return crawler_pb2.BiliDynamicResponse(
             code=code,
             message=message,
             data=data
         )
+
+    def GetCommentInfo(self, request, context):
+        return None
 
 
 # 服务端启动函数
@@ -27,7 +30,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
     # 将定义的服务类添加到 gRPC 服务器
-    crawler_pb2_grpc.add_CrawlerServicer_to_server(CrawlerService(), server)
+    crawler_pb2_grpc.add_BiliCrawlerServicer_to_server(BiliCrawlerService(), server)
 
     # 读取证书和密钥
     with open('server.crt', 'rb') as f:

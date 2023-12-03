@@ -5,7 +5,7 @@ import grpc
 import crawler_pb2 as crawler__pb2
 
 
-class CrawlerStub(object):
+class BiliCrawlerStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,13 +15,18 @@ class CrawlerStub(object):
             channel: A grpc.Channel.
         """
         self.GetDynamicInfo = channel.unary_unary(
-                '/Crawler.Crawler/GetDynamicInfo',
-                request_serializer=crawler__pb2.DynamicRequest.SerializeToString,
-                response_deserializer=crawler__pb2.DynamicResponse.FromString,
+                '/Crawler.BiliCrawler/GetDynamicInfo',
+                request_serializer=crawler__pb2.BiliDynamicRequest.SerializeToString,
+                response_deserializer=crawler__pb2.BiliDynamicResponse.FromString,
+                )
+        self.GetCommentInfo = channel.unary_unary(
+                '/Crawler.BiliCrawler/GetCommentInfo',
+                request_serializer=crawler__pb2.BiliCommentRequest.SerializeToString,
+                response_deserializer=crawler__pb2.BiliCommentResponse.FromString,
                 )
 
 
-class CrawlerServicer(object):
+class BiliCrawlerServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetDynamicInfo(self, request, context):
@@ -30,22 +35,33 @@ class CrawlerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetCommentInfo(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
-def add_CrawlerServicer_to_server(servicer, server):
+
+def add_BiliCrawlerServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetDynamicInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDynamicInfo,
-                    request_deserializer=crawler__pb2.DynamicRequest.FromString,
-                    response_serializer=crawler__pb2.DynamicResponse.SerializeToString,
+                    request_deserializer=crawler__pb2.BiliDynamicRequest.FromString,
+                    response_serializer=crawler__pb2.BiliDynamicResponse.SerializeToString,
+            ),
+            'GetCommentInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCommentInfo,
+                    request_deserializer=crawler__pb2.BiliCommentRequest.FromString,
+                    response_serializer=crawler__pb2.BiliCommentResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Crawler.Crawler', rpc_method_handlers)
+            'Crawler.BiliCrawler', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class Crawler(object):
+class BiliCrawler(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -59,8 +75,25 @@ class Crawler(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Crawler.Crawler/GetDynamicInfo',
-            crawler__pb2.DynamicRequest.SerializeToString,
-            crawler__pb2.DynamicResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/Crawler.BiliCrawler/GetDynamicInfo',
+            crawler__pb2.BiliDynamicRequest.SerializeToString,
+            crawler__pb2.BiliDynamicResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetCommentInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Crawler.BiliCrawler/GetCommentInfo',
+            crawler__pb2.BiliCommentRequest.SerializeToString,
+            crawler__pb2.BiliCommentResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -2,17 +2,29 @@ syntax = "proto3";
 
 package Crawler;
 
-service Crawler {
-  rpc GetDynamicInfo (DynamicRequest) returns (DynamicResponse);
+service BiliCrawler {
+  rpc GetDynamicInfo (BiliDynamicRequest) returns (BiliDynamicResponse);
+  rpc GetCommentInfo (BiliCommentRequest) returns (BiliCommentResponse);
 }
 
-message DynamicRequest {
+message BiliDynamicRequest {
   string uid = 1;
   string dynamic_id = 2;
   bool interruptible = 3;
 }
 
-message DynamicResponse {
+message BiliDynamicResponse {
+  string code = 1;
+  string message = 2;
+  string data = 3;
+}
+
+message BiliCommentRequest{
+  string dynamic_id = 1;
+  bool interruptible = 2;
+}
+
+message BiliCommentResponse {
   string code = 1;
   string message = 2;
   string data = 3;
