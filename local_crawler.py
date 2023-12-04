@@ -4,13 +4,13 @@ import json
 
 
 def bili_get_single_dynamic_info_list(url, headers, cookies):
-    '''
+    """
     见 https://socialsisteryi.github.io/bilibili-API-collect/docs/dynamic/space.html
     :param url:
     :param headers:
     :param cookie:
     :return: 返回一个 list，里面的元素是动态的信息，排列为在空间中的排列，在前面的元素发布的时间晚
-    '''
+    """
     result = []
     response = requests.get(url, cookies=cookies, headers=headers)
     content = response.text
@@ -36,7 +36,7 @@ def bili_get_single_dynamic_info_list(url, headers, cookies):
 
 
 def bili_get_dynamic_info_list(uid, headers, cookies):
-    '''
+    """
     :param uid: 用户的 B 站 uid
     :param headers:
     :param cookies:
@@ -51,7 +51,7 @@ def bili_get_dynamic_info_list(uid, headers, cookies):
     5. 点赞数
     6. 发布时间（Unix 时间戳）
     7. 是否为置顶动态
-    '''
+    """
     offset = ''
     url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
         offset, uid)
@@ -75,10 +75,10 @@ def bili_get_dynamic_info_list(uid, headers, cookies):
 
 
 def bili_get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id):
-    '''
+    """
     会返回到 dynamic_id 之前的动态信息列表，不包括 dynamic_id 的这条动态
     注意置顶动态的情况，在后端处理的时候，需要再前进一个考虑，防止每次因为置顶动态停止
-    '''
+    """
     offset = ''
     url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
         offset, uid)
@@ -115,9 +115,10 @@ def bili_get_dynamic_info_entrance(uid, dynamic_id, interruptible):
         return bili_get_dynamic_info_list(uid, headers, cookies)
 
 
-def bili_get_comment_info_content(url):
+def bili_get_comment_info_content(url, rpid, interruptible):
     # 页码范围从 1 开始
-    # 第 1 页有无法包含置顶评论
+    # 第 1 页有可能无法包含置顶评论
+    # 返回结果和是否继续，继续为 True，否则为 False
     response = requests.get(url, cookies=cookies, headers=headers)
     content = response.text
     json_obj = json.loads(content)
@@ -125,6 +126,9 @@ def bili_get_comment_info_content(url):
     result = []
     for i in replies_list:
         result_item = dict()
+        if interruptible:
+            if i['rpid_str'] == rpid:
+                return result, False
         result_item['rpid_str'] = i['rpid_str']
         result_item['oid'] = i['oid']
         result_item['ctime'] = i['ctime']
@@ -132,12 +136,14 @@ def bili_get_comment_info_content(url):
         result_item['count'] = i['count']
         result_item['message'] = i['content']['message']
         result.append(result_item)
-    return result
+    return result, True
 
 
-def bili_get_comment_info(oid):
-    '''
+def bili_get_comment_info(oid, rpid, interruptible):
+    """
     :param oid: 动态的 id
+    :param rpid: 动态中评论的 rpid
+    :param interruptible: 是否可以打断，如果可以，最后的结果不包含 rpid 的那一条评论
     :return: 状态码，状态信息，评论列表
     这三个都是字符串，评论列表是 list 用 json.dumps 转化成的字符串
     评论列表中的每一条都是一个 dict，包括：
@@ -147,21 +153,24 @@ def bili_get_comment_info(oid):
     4. 点赞数
     5. 评论数
     6. 评论内容
-    '''
+    """
+    status_code = "0"
+    status_message = "Success"
     result = []
     pages = 1
     while True:
         url = 'https://api.bilibili.com/x/v2/reply?oid={}&type=17&sort=0&pn={}'.format(oid, pages)
-        list_item = bili_get_comment_info_content(url)
+        list_item, should_continue = bili_get_comment_info_content(url, rpid, interruptible)
+        if not should_continue:
+            result = result + list_item
+            return status_code, status_message, json.dumps(result)
         if not list_item:
             break
         result = result + list_item
         pages = pages + 1
         print(pages)
         time.sleep(2)
-    status_code = "0"
-    status_message = "Success"
-    return result
+    return status_code, status_message, result
 
 
 cookies = {
@@ -209,10 +218,10 @@ headers = {
 
 if __name__ == '__main__':
     uid = '401315430'
-    oid = '662016827293958168'
-    url = 'https://api.bilibili.com/x/v2/reply?oid=870809549906378774&type=17&sort=0&pn=2'
-    s = time.time()
-    a = bili_get_comment_info(oid)
+    oid = '764619928261099541'
+    rpid = '197156946592'
+    start = time.time()
+    a = bili_get_comment_info(oid, rpid, False)
     end = time.time()
-    dur = end - s
+    dur = end-start
     print("aaa")
