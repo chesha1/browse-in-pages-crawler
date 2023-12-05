@@ -8,7 +8,7 @@ import crawler_pb2_grpc
 # 定义连接 gRPC 服务器的函数
 def run():
     # 读取服务器证书
-    with open('localhost.crt', 'rb') as f:
+    with open('server.crt', 'rb') as f:
         trusted_certs = f.read()
 
     # 创建SSL凭证
