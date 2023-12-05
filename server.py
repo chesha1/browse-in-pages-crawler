@@ -33,9 +33,9 @@ def serve():
     crawler_pb2_grpc.add_BiliCrawlerServicer_to_server(BiliCrawlerService(), server)
 
     # 读取证书和密钥
-    with open('server.crt', 'rb') as f:
+    with open('localhost.crt', 'rb') as f:
         certificate_chain = f.read()
-    with open('server.key', 'rb') as f:
+    with open('localhost.key', 'rb') as f:
         private_key = f.read()
 
     # 创建SSL凭证

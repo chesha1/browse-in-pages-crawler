@@ -3,7 +3,7 @@ import requests
 import json
 
 
-def bili_get_single_dynamic_info_list(url, headers, cookies):
+def bili_get_single_dynamic_info_list(url):
     """
     见 https://socialsisteryi.github.io/bilibili-API-collect/docs/dynamic/space.html
     :param url:
@@ -42,7 +42,7 @@ def bili_get_single_dynamic_info_list(url, headers, cookies):
     return result
 
 
-def bili_get_dynamic_info_list(uid, headers, cookies):
+def bili_get_dynamic_info_list(uid):
     """
     :param uid: 用户的 B 站 uid
     :param headers:
@@ -65,7 +65,7 @@ def bili_get_dynamic_info_list(uid, headers, cookies):
         offset, uid)
     result = []
     while True:
-        list_item = bili_get_single_dynamic_info_list(url, headers, cookies)
+        list_item = bili_get_single_dynamic_info_list(url)
         if list_item == [-352]:
             status_code = "-1"
             status_message = "terminated by bilibili system"
@@ -82,7 +82,7 @@ def bili_get_dynamic_info_list(uid, headers, cookies):
     return status_code, status_message, json.dumps(result)
 
 
-def bili_get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id):
+def bili_get_dynamic_info_list_with_interrupt(uid, dynamic_id):
     """
     会返回到 dynamic_id 之前的动态信息列表，不包括 dynamic_id 的这条动态
     注意置顶动态的情况，在后端处理的时候，需要再前进一个考虑，防止每次因为置顶动态停止
@@ -92,7 +92,7 @@ def bili_get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id)
         offset, uid)
     result = []
     while True:
-        list_item = bili_get_single_dynamic_info_list(url, headers, cookies)
+        list_item = bili_get_single_dynamic_info_list(url)
         if not list_item:
             break
         current_id_list = [i['id_str'] for i in list_item]
@@ -118,9 +118,9 @@ def bili_get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id)
 
 def bili_get_dynamic_info_entrance(uid, dynamic_id, interruptible):
     if interruptible:
-        return bili_get_dynamic_info_list_with_interrupt(uid, headers, cookies, dynamic_id)
+        return bili_get_dynamic_info_list_with_interrupt(uid, dynamic_id)
     else:
-        return bili_get_dynamic_info_list(uid, headers, cookies)
+        return bili_get_dynamic_info_list(uid)
 
 
 def bili_get_comment_info_content(url, rpid, interruptible):
@@ -230,5 +230,5 @@ if __name__ == '__main__':
     start = time.time()
     a = bili_get_dynamic_info_entrance(uid, rpid, False)
     end = time.time()
-    dur = end-start
+    dur = end - start
     print("aaa")
