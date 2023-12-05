@@ -42,7 +42,7 @@ def serve():
     server_credentials = grpc.ssl_server_credentials([(private_key, certificate_chain)])
 
     # 指定服务器监听的端口
-    server.add_secure_port('localhost:60000', server_credentials)
+    server.add_secure_port('0.0.0.0:60000', server_credentials)
 
     # 启动服务器
     server.start()

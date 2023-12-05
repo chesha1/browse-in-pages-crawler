@@ -15,7 +15,8 @@ def run():
     credentials = grpc.ssl_channel_credentials(root_certificates=trusted_certs)
 
     # 在实际应用中，应替换为服务器的实际地址和端口
-    with grpc.secure_channel('localhost:60000', credentials) as channel:
+    with grpc.secure_channel('106.15.44.72:60000', credentials) as channel:
+    # with grpc.secure_channel('localhost:60000', credentials) as channel:
         # 创建一个客户端对象
         stub = crawler_pb2_grpc.BiliCrawlerStub(channel)
 
