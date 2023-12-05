@@ -24,4 +24,92 @@ python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. crawler.prot
 
 每个 item 有 6 个元素，爬取一个长度为 1282 的评论列表，用时 207 秒，这个过程中，都没有触发反爬
 
+## 安全连接
+生成一个为运行在特定 IP 地址（如 106.15.44.72）的微服务使用的证书，需要完整地遵循以下步骤：
+
+### 1. 安装 OpenSSL
+
+确保您的系统已安装 OpenSSL。
+
+### 2. 生成根证书（CA）
+
+#### a. 创建根密钥
+
+```bash
+openssl genrsa -out ca.key 2048
+```
+
+#### b. 创建并自签名根证书
+
+```bash
+openssl req -new -x509 -days 36500 -key ca.key -out ca.crt -subj "/CN=My Root CA"
+```
+
+### 3. 创建服务器证书
+
+#### a. 生成服务器私钥
+
+```bash
+openssl genrsa -out server.key 2048
+```
+
+#### b. 创建 OpenSSL 配置文件
+
+创建一个新的配置文件 `san.cnf` 包含以下内容：
+
+```ini
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+req_extensions = req_ext
+distinguished_name = dn
+
+[dn]
+CN = localhost
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = 106.15.44.72
+```
+
+#### c. 创建证书签名请求（CSR）
+
+使用新的配置文件创建 CSR：
+
+```bash
+openssl req -new -key server.key -out server.csr -config san.cnf
+```
+
+#### d. 使用根证书签发服务器证书
+
+```bash
+openssl x509 -req -days 36500 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt -extensions req_ext -extfile san.cnf
+```
+
+### 4. 验证证书
+
+```bash
+openssl verify -CAfile ca.crt server.crt
+```
+
+这个命令用来验证服务器证书是否有效。
+
+### 5. 使用证书配置 gRPC
+
+在 gRPC 服务器和客户端上使用生成的 `server.crt` 和 `server.key`。配置方式会根据你使用的编程语言和 gRPC 库有所不同。
+
+请注意，这些步骤生成的证书仅适用于开发和测试环境。在生产环境中，应使用由受信任的证书颁发机构（CA）签发的证书。
 ## 部署
+1. `git clone` 本仓库，注意本仓库不包含证书文件
+2. 构建镜像
+    ```commandline
+    docker build -t crawler .
+    ```
+3. 运行容器
+    ```commandline
+    docker run -d -p 60000:60000 crawler
+    ```
+

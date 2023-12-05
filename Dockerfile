@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 60000
 
 # 运行应用
-CMD ["python3", "./local_crawler.py"]
+CMD ["python3", "./server.py"]
