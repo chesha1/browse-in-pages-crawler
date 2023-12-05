@@ -28,6 +28,13 @@ def bili_get_single_dynamic_info_list(url, headers, cookies):
         result_item['comment'] = i['modules']['module_stat']['comment']['count']
         result_item['like'] = i['modules']['module_stat']['like']['count']
         result_item['top'] = False
+        result_item['content'] = i['modules']['module_dynamic']['major']
+        if result_item['content'] is None:
+            result_item['content'] = i['modules']['module_dynamic']['desc']['text']
+        elif 'opus' in result_item['content']:
+            result_item['content'] = result_item['content']['opus']['summary']['text']
+        else:
+            result_item['content'] = "不是图文动态"
         if 'module_tag' in i['modules']:
             result_item['top'] = True
         result.append(result_item)
@@ -51,6 +58,7 @@ def bili_get_dynamic_info_list(uid, headers, cookies):
     5. 点赞数
     6. 发布时间（Unix 时间戳）
     7. 是否为置顶动态
+    8. 动态内容
     """
     offset = ''
     url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
@@ -61,7 +69,7 @@ def bili_get_dynamic_info_list(uid, headers, cookies):
         if list_item == [-352]:
             status_code = "-1"
             status_message = "terminated by bilibili system"
-            return status_code, status_message, result
+            return status_code, status_message, json.dumps(result)
         if not list_item:
             break
         offset = list_item[-1]['id_str']
@@ -168,9 +176,8 @@ def bili_get_comment_info(oid, rpid, interruptible):
             break
         result = result + list_item
         pages = pages + 1
-        print(pages)
         time.sleep(2)
-    return status_code, status_message, result
+    return status_code, status_message, json.dumps(result)
 
 
 cookies = {
@@ -218,10 +225,10 @@ headers = {
 
 if __name__ == '__main__':
     uid = '401315430'
-    oid = '764619928261099541'
+    oid = '853842865722228759'
     rpid = '197156946592'
     start = time.time()
-    a = bili_get_comment_info(oid, rpid, False)
+    a = bili_get_dynamic_info_entrance(uid, rpid, False)
     end = time.time()
     dur = end-start
     print("aaa")

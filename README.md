@@ -18,11 +18,13 @@ python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. crawler.prot
 - [ ] Twitter（F12查找UserT）
 - [ ] 微博
 - [ ] type 11 的图片动态，id!=oid，需要一个新的入口
+- [ ] type 1 的视频，错误返回
 
 ## 性能
 为了躲过 B 站的反爬手段，每次 GET 之间有 2 秒的间隔，在这种情况下，`get_dynamic_info_list_with_interrupt` 和 `get_dynamic_info_list` 几乎没有性能区别
 
-每个 item 有 6 个元素，爬取一个长度为 1282 的评论列表，用时 207 秒，这个过程中，都没有触发反爬
+每个 item 有 8 个元素，爬取一个长度为 1200 的用户的动态列表，用时 251.4 秒，这个过程中，都没有触发反爬
+每个 item 有 6 个元素，爬取一个长度为 826 的动态的评论列表，用时 98.8 秒，这个过程中，都没有触发反爬
 
 ## 安全连接
 生成一个为运行在特定 IP 地址（如 106.15.44.72）的微服务使用的证书，需要完整地遵循以下步骤：
