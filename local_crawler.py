@@ -3,13 +3,11 @@ import requests
 import json
 
 
-def bili_get_single_dynamic_info_list(url):
+def bili_get_single_dynamic_info_list(url, dynamic_id, interruptible):
     """
     见 https://socialsisteryi.github.io/bilibili-API-collect/docs/dynamic/space.html
-    :param url:
-    :param headers:
-    :param cookie:
-    :return: 返回一个 list，里面的元素是动态的信息，排列为在空间中的排列，在前面的元素发布的时间晚
+    :return: 返回一个 list 和一个布尔值，列表里面的元素是动态的信息，排列为在空间中的排列，在前面的元素发布的时间晚
+                                     布尔值表示爬虫是否应该继续，是否被打断
     """
     result = []
     response = requests.get(url, cookies=cookies, headers=headers)
@@ -21,6 +19,9 @@ def bili_get_single_dynamic_info_list(url):
 
     for i in data:
         result_item = dict()
+        if interruptible:
+            if i['id_str'] == dynamic_id:
+                return result, False
         result_item['id_str'] = i['id_str']
         result_item['comment_type'] = i['basic']['comment_type']
         result_item['pub_ts'] = i['modules']['module_author']['pub_ts']
@@ -29,6 +30,8 @@ def bili_get_single_dynamic_info_list(url):
         result_item['like'] = i['modules']['module_stat']['like']['count']
         result_item['top'] = False
         result_item['content'] = i['modules']['module_dynamic']['major']
+
+        # 根据动态类型不同，获取动态内容
         if result_item['content'] is None:
             result_item['content'] = i['modules']['module_dynamic']['desc']['text']
         elif 'opus' in result_item['content']:
@@ -37,12 +40,14 @@ def bili_get_single_dynamic_info_list(url):
             result_item['content'] = "不是图文动态"
         if 'module_tag' in i['modules']:
             result_item['top'] = True
+
+        # 将这次循环中的结果元素，添加到结果列表中
         result.append(result_item)
 
-    return result
+    return result, True
 
 
-def bili_get_dynamic_info_list(uid):
+def bili_get_dynamic_info_list(uid, dynamic_id, interruptible):
     """
     :param uid: 用户的 B 站 uid
     :param headers:
@@ -64,8 +69,13 @@ def bili_get_dynamic_info_list(uid):
     url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
         offset, uid)
     result = []
+    status_code = "0"
+    status_message = "Success"
     while True:
-        list_item = bili_get_single_dynamic_info_list(url)
+        list_item, should_continue = bili_get_single_dynamic_info_list(url, dynamic_id, interruptible)
+        if not should_continue:
+            result = result + list_item
+            return status_code, status_message, json.dumps(result)
         if list_item == [-352]:
             status_code = "-1"
             status_message = "terminated by bilibili system"
@@ -77,50 +87,7 @@ def bili_get_dynamic_info_list(uid):
         url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
             offset, uid)
         time.sleep(2)
-    status_code = "0"
-    status_message = "Success"
     return status_code, status_message, json.dumps(result)
-
-
-def bili_get_dynamic_info_list_with_interrupt(uid, dynamic_id):
-    """
-    会返回到 dynamic_id 之前的动态信息列表，不包括 dynamic_id 的这条动态
-    注意置顶动态的情况，在后端处理的时候，需要再前进一个考虑，防止每次因为置顶动态停止
-    """
-    offset = ''
-    url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
-        offset, uid)
-    result = []
-    while True:
-        list_item = bili_get_single_dynamic_info_list(url)
-        if not list_item:
-            break
-        current_id_list = [i['id_str'] for i in list_item]
-
-        # 如果检测到给定的 id，则停止爬取
-        if dynamic_id in current_id_list:
-            for index, element in enumerate(current_id_list):
-                if element == dynamic_id:
-                    list_item = list_item[:index]
-                    break
-            result = result + list_item
-            break
-
-        offset = list_item[-1]['id_str']
-        result = result + list_item
-        url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?offset={}&host_mid={}&timezone_offset=-480&features=itemOpusStyle'.format(
-            offset, uid)
-        time.sleep(2)
-    status_code = "0"
-    status_message = "Success"
-    return status_code, status_message, json.dumps(result)
-
-
-def bili_get_dynamic_info_entrance(uid, dynamic_id, interruptible):
-    if interruptible:
-        return bili_get_dynamic_info_list_with_interrupt(uid, dynamic_id)
-    else:
-        return bili_get_dynamic_info_list(uid)
 
 
 def bili_get_comment_info_content(url, rpid, interruptible):
@@ -224,11 +191,8 @@ headers = {
 }
 
 if __name__ == '__main__':
-    uid = '401315430'
-    oid = '853842865722228759'
-    rpid = '197156946592'
-    start = time.time()
-    a = bili_get_dynamic_info_entrance(uid, rpid, False)
-    end = time.time()
-    dur = end - start
+    url = 'https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?&host_mid=672328094&timezone_offset=-480&features=itemOpusStyle'
+    id = '869267051056726055'
+    uid = '38809570'
+    a = bili_get_dynamic_info_list(uid, id, True)
     print("aaa")

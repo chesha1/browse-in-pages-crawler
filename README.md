@@ -7,14 +7,10 @@ python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. crawler.prot
 ```
 
 ## TODO
-- [ ] 打包成容器方便部署
 - [ ] 设置爬取评论区超时返回
 - [ ] 更新触发反爬的动态和评论爬取，把触发反爬的动态的id返回，作为新任务的开头
 - [ ] 更新从某个开头开始的评论区爬取
-- [ ] 重构可打断的动态爬取
 - [ ] 访问发生错误'https://api.bilibili.com/x/v2/reply?oid=662016827293958168&type=17&sort=0&pn=506'
-- [x] localhost的安全链接
-- [ ] 远程安全链接
 - [ ] Twitter（F12查找UserT）
 - [ ] 微博
 - [ ] type 11 的图片动态，id!=oid，需要一个新的入口
