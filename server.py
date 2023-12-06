@@ -10,8 +10,8 @@ class BiliCrawlerService(crawler_pb2_grpc.BiliCrawlerServicer):
 
     # 实现.proto文件中定义的RPC方法
     def GetDynamicInfo(self, request, context):
-        code, message, data = local_crawler.bili_get_dynamic_info_entrance(request.uid, request.dynamic_id,
-                                                                           request.interruptible)
+        code, message, data = local_crawler.bili_get_dynamic_info_list(request.uid, request.dynamic_id,
+                                                                       request.interruptible)
 
         # 构建响应消息
         return crawler_pb2.BiliDynamicResponse(

@@ -1,5 +1,5 @@
 # 使用 Python 的官方基础镜像
-FROM python:slim
+FROM python:alpine
 
 # 设置工作目录
 WORKDIR /usr/src/app
